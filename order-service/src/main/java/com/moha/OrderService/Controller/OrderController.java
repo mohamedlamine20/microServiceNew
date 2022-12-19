@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
    private final OrderService orderService;
     @PostMapping("/create")
-    public ResponseEntity<OrderDto> create(@RequestBody OrderDto orderDto){
+    public ResponseEntity<OrderDto> create(@RequestBody OrderDto orderDto) throws Exception {
         return ResponseEntity.ok(orderService.createOrder(orderDto));
     }
 
