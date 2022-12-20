@@ -15,6 +15,6 @@ public class InventoryService {
     private final InventoryRepository invevtoryRepository;
     public List<InventoryTO> isInStock(List<String> skuCode){
        return invevtoryRepository.findBySkuCodeIn(skuCode).stream().map(inventory
-               -> InventoryTO.builder().skuCode(inventory.getSkuCode()).isStock(inventory.getQuantity()>0).build()).toList();
+               -> inventoryMapper.to(inventory)).toList();
     }
 }
