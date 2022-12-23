@@ -23,7 +23,7 @@ public class OrderService {
     public OrderDto createOrder(OrderDto  orderDto) throws Exception {
         List<String>skuCodes = orderDto.getOrderItemDtos().stream().map(orderItemDto -> orderItemDto.getSkuCode()).toList();
         InventoryTO[] inventoryTOS = webClient.build().get()
-                .uri("http://localhost:8082/inventory/isInStock",
+                .uri("http://inventory-service/inventory/isInStock",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryTO[].class)

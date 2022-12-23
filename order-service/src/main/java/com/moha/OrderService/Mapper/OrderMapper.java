@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface OrderMapper {
 
 
-    @Mapping(source = "orderItems",target = "orderItemDtos")
+    @Mapping(source = "orderItemList",target = "orderItemDtos")
     OrderDto to(Order order);
 
     @InheritInverseConfiguration
