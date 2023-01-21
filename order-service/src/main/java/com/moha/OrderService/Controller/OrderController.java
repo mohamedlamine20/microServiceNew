@@ -8,10 +8,9 @@ import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/order")
@@ -30,5 +29,20 @@ public class OrderController {
     public ResponseEntity<OrderDto> fallbackMethod(OrderDto orderDto ,RuntimeException runtimeException){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
     }
+
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @CircuitBreaker(name = "inventory", fallbackMethod = "fallBackMethod")
+    @TimeLimiter(name = "inventory")
+    @Retry(name = "inventory")
+    public CompletableFuture<String> placeOrder(@RequestBody OrderDto orderDto) {
+        return CompletableFuture.supplyAsync(() -> orderService.placeOrder(orderDto));
+    }
+
+    public CompletableFuture<String> fallBackMethod(OrderDto orderDto, RuntimeException runtimeException) {
+        return CompletableFuture.supplyAsync(() -> "Oops! Something went wrong, please order after some time!");
+    }
+
 
 }
