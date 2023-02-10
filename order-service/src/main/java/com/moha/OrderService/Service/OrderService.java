@@ -7,15 +7,21 @@ import com.moha.OrderService.DTO.OrderDto;
 import com.moha.OrderService.DTO.OrderItemDto;
 import com.moha.OrderService.DTO.OrderNotification;
 import com.moha.OrderService.Mapper.OrderMapper;
+import com.moha.OrderService.Module.Order;
 import com.moha.OrderService.Repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +44,8 @@ public class OrderService {
                 .retrieve()
                 .bodyToMono(InventoryTO[].class)
                 .block();
+
+
 
         if(Arrays.stream(inventoryTOS).allMatch(inventoryTO -> inventoryTO.isStock())){
 
@@ -86,5 +94,11 @@ public class OrderService {
         } finally {
             inventoryServiceLookup.flush();
         }
+    }
+
+        public Page<OrderDto> findAll(Pageable pageable){
+            Page<Order> orderDtos=orderRepository.findAll(pageable);
+       return new PageImpl<>(orderDtos.getContent().stream().map(order -> orderMapper.to(order)).collect(Collectors.toList()),pageable,orderDtos.getTotalElements());
+
     }
 }
