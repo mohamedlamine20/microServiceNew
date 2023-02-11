@@ -2,6 +2,7 @@ package productService.example.mohaDev.Controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import java.util.List;
 public class Controller {
      private final ProductService  productService;
     @GetMapping("/all")
+    @Cacheable(value = "ProductDto")
     public ResponseEntity<List<ProductDto>> findAll()
     {
      return ResponseEntity.ok(productService.findAll());
