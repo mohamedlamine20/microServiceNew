@@ -45,17 +45,6 @@ public class OrderController {
 
     @GetMapping("/test")
     public List<Product>test(){
-        System.out.println("--------------------------");
-        System.out.println(orderServiceOpenFeign.findAll().size());
-        Product product=new Product();
-        product.setTitle("aaaaaaaaaa");
-        product.setPrice(13.5);
-        product.setDescription("gfhjh");
-        product.setImage("qsdfghjkl");
-        System.out.println(orderServiceOpenFeign.addProduct(product));
-
-        System.out.println(orderServiceOpenFeign.findById(1l));
-        System.out.println(orderServiceOpenFeign.findAll(5));
         return orderServiceOpenFeign.findAll();
     }
     public ResponseEntity<OrderDto> fallbackMethod(OrderDto orderDto ,RuntimeException runtimeException){

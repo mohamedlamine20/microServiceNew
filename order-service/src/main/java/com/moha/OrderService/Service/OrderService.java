@@ -85,8 +85,9 @@ public class OrderService {
                     .allMatch(InventoryTO::isStock);
 
             if (allProductsInStock) {
-                orderRepository.save(orderMapper.from(orderDto));
-                kafkaTemplate.send("notificationTopic",new OrderNotification(orderDto.getOrderNumber()));
+                orderDto.setOrderNumber(UUID.randomUUID().toString());
+                Order order = orderRepository.save(orderMapper.from(orderDto));
+                kafkaTemplate.send("notificationTopic",new OrderNotification(order.getOrderNumber()));
                 return "Order Placed Successfully";
             } else {
                 throw new IllegalArgumentException("Product is not in stock, please try again later");
