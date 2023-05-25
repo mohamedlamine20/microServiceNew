@@ -15,14 +15,13 @@ import java.util.List;
 @Slf4j
 public class InventoryService {
    private final InventoryMapper inventoryMapper;
-    private final InventoryRepository invevtoryRepository;
+    private final InventoryRepository inventoryRepository;
     @SneakyThrows
     public List<InventoryTO> isInStock(List<String> skuCode){
         log.info("start");
         Thread.sleep(1000);
         log.info("end");
 
-       return invevtoryRepository.findBySkuCodeIn(skuCode).stream().map(inventory
-               -> inventoryMapper.to(inventory)).toList();
+       return inventoryRepository.findBySkuCodeIn(skuCode).stream().map(inventoryMapper::to).toList();
     }
 }

@@ -41,27 +41,124 @@ services:
     ports:
       - "9411:9411"
 
-  order-service:
+  product-service-app:
+    container_name: product-service-app
+    build:
+      context: ./product-service
+    ports:
+      - "8989:8989"
+    depends_on:
+      - mongo-db
+      - discovery-server-app
+      - api-gateway-service-app
+    environment:
+      - DATA_BASE_HOST=mongo-db
+      - EUREKA_HOST=discovery-server-app
+      - ZIPKIN_HOST=zipkin
+
+
+  api-gateway-service-app:
+    container_name: api-gateway-app
+    build:
+      context: ./api-gateway
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - discovery-server-app
+    environment:
+      - EUREKA_HOST=discovery-server-app
+      - ZIPKIN_HOST=zipkin
+
+
+  discovery-server-app:
+    container_name: discovery-server-app
+    build:
+      context: ./discovry-server
+    ports:
+      - "8761:8761"
+    restart: always
+
+  inventory-service-app:
+    container_name: inventory-service-app
+    build:
+      context: ./inventory-service
+    ports:
+      - "9191:9191"
+    depends_on:
+      - discovery-server-app
+      - api-gateway-service-app
+      - zipkin
+      - keycloak
+      - broker
+      - zookeeper
+      - inventory-service-db
+    environment:
+      - EUREKA_HOST=discovery-server-app
+      - KAFKA_HOST=broker
+      - ZIPKIN_HOST=zipkin
+      - DATA_BASE_HOST=inventory-service-db
+
+
+  notification-service-app:
+    container_name: notification-service-app
+    build:
+      context: ./notification-service
+    ports:
+      - "9292:9292"
+    depends_on:
+      - zookeeper
+      - broker
+      - keycloak
+      - zipkin
+      - api-gateway-service-app
+      - discovery-server-app
+    environment:
+      - EUREKA_HOST=discovery-server-app
+      - KAFKA_HOST=broker
+
+
+  order-service-app:
+    container_name: order-service-app
+    build:
+      context: ./order-service
+    ports:
+      - "9393:9393"
+    depends_on:
+      - order-service-db
+      - discovery-server-app
+      - api-gateway-service-app
+      - zipkin
+      - keycloak
+      - broker
+      - zookeeper
+    environment:
+      - KAFKA_HOST=broker
+      - EUREKA_HOST=discovery-server-app
+      - ZIPKIN_HOST=zipkin
+      - DATA_BASE_HOST=order-service-db
+
+  order-service-db:
     image: mysql
-    container_name: order-service
+    container_name: order-service-db
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: orderservice
 
-  inventory-service:
+  inventory-service-db:
     image: mysql
-    container_name: inventory-service
+    container_name: inventory-service-db
     ports:
       - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: inventoryservice
 
-  mongo :
+  mongo-db :
     image: mongo
-    container_name: mongo
+    container_name: mongo-db
     ports:
       - "27017:27017"
     environment:

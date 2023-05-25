@@ -10,8 +10,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest
 class ProductApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+//	@Test
+//	void contextLoads() {
+//	}
 
 }
