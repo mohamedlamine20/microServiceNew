@@ -1,0 +1,7 @@
+/.idea/
+/api-gateway/target
+/discovry-server/target
+/inventory-service/target
+/notification-service/target
+/order-service/target
+/product-service/target

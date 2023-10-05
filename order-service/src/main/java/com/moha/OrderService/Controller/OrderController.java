@@ -27,7 +27,7 @@ public class OrderController {
    private final OrderService orderService;
    private final OrderServiceOpenFeign orderServiceOpenFeign;
     @PostMapping("/create")
-    @CircuitBreaker(name = "inventory",fallbackMethod = "fallbackMethod")
+    @CircuitBreaker(name = "inventory-service",fallbackMethod = "fallbackMethod")
     //@TimeLimiter(name = "inventory" )
    // @Retry(name = "inventory")
     public ResponseEntity<OrderDto> create(@RequestBody OrderDto orderDto) throws Exception {
@@ -54,9 +54,9 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @CircuitBreaker(name = "inventory", fallbackMethod = "fallBackMethod")
-    @TimeLimiter(name = "inventory")
-    @Retry(name = "inventory")
+    @CircuitBreaker(name = "inventory-service", fallbackMethod = "fallBackMethod")
+    @TimeLimiter(name = "inventory-service")
+    @Retry(name = "inventory-service")
     public CompletableFuture<String> placeOrder(@RequestBody OrderDto orderDto) {
         return CompletableFuture.supplyAsync(() -> orderService.placeOrder(orderDto));
     }
